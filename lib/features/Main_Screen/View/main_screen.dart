@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffees_aplication/features/Main_Screen/Widgets/Custom_Navigation_Bar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:scroll_to_hide/scroll_to_hide.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -9,20 +13,59 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  late ScrollController _scrollController;
+int indexNavigationBar = 0;
 
-  int _indexNavigationBar = 0;
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
+final ScrollController scrollController = ScrollController();
+
+final List<AnimationController> controller = [];
+
+class _myStream {
+  late String url;
+
+  set _url(String urlImage) {
+    url = urlImage;
+    _controller.add(url);
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  final StreamController<String> _controller = StreamController.broadcast();
+
+  Stream<String> get strims => _controller.stream;
+}
+
+final List<_myStream> _myStreams = [];
+
+final _streamCoffeeDay = _myStream();
+
+String coffesDayUrl = '';
+
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  void getImages(
+      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) async {
+    final storageRef = FirebaseStorage.instance.ref();
+
+    for (int i = 0; i < snap.data!.size; i++) _myStreams.add(_myStream());
+
+    for (int i = 0; i < snap.data!.size; i++) {
+      final pathReference =
+          storageRef.child('coffees/${snap.data!.docs[i].id}/mainImage.png');
+
+      final imageUrl = await pathReference.getDownloadURL();
+
+      controller.add(AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 1500)));
+      _myStreams[i]._url = imageUrl;
+    }
+  }
+
+  void getImageCoffesDay(
+      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) async {
+    final pathReference = FirebaseStorage.instance
+        .ref()
+        .child('coffees/${snap.data!.docs[0].id}/image.png');
+    print(snap.data!.docs[0].id);
+
+    final imageUrl = await pathReference.getDownloadURL();
+    _streamCoffeeDay._url = imageUrl;
   }
 
   @override
@@ -31,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
       backgroundColor: const Color(0xFFE9E9E9),
       extendBody: true,
       body: CustomScrollView(
-        controller: _scrollController,
+        controller: scrollController,
         slivers: [
           SliverAppBar(
             pinned: true,
@@ -72,37 +115,207 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
             flexibleSpace: FlexibleSpaceBar(
-              title: Padding(
-                padding: const EdgeInsets.only(
-                    top: 120, right: 20, left: 20, bottom: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Flexible(
-                      flex: 4,
-                      child: AutoSizeText(
-                        'Кофе дня',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                        ),
+              titlePadding: const EdgeInsets.only(
+                  top: 120, right: 15, left: 15, bottom: 15),
+              title: Flex(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                direction: Axis.vertical,
+                children: [
+                  const Flexible(
+                    flex: 4,
+                    child: AutoSizeText(
+                      'Кофе дня',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Flexible(child: SizedBox(height: 10)),
-                    Flexible(
-                      flex: 4,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                  ),
+                  const Flexible(child: SizedBox(height: 10)),
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF7E5424),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    )
-                  ],
-                ),
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('CoffeesDay')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text("Loading");
+                          }
+                          getImageCoffesDay(snapshot);
+
+                          return StreamBuilder<dynamic>(
+                              stream: _streamCoffeeDay.strims,
+                              builder: (context, snap) {
+                                if (!snap.hasData) {
+                                  return const SizedBox();
+                                }
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      flex: 3,
+                                      child: Stack(
+                                        children: [
+                                          Center(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(20),
+                                                topRight: Radius.circular(20),
+                                              ),
+                                              child: Image.network(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(context)
+                                                    .size
+                                                    .height,
+                                                snap.data,
+                                                fit: BoxFit.cover,
+                                                loadingBuilder: (context, image,
+                                                    loadingProgress) {
+                                                  if (loadingProgress == null) {
+                                                    return image;
+                                                  }
+                                                  return const Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: Container(
+                                              margin: const EdgeInsets.all(10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 5),
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFF3E2810),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  border: Border.all(
+                                                    color: Colors.white,
+                                                    width: 1,
+                                                  )),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  AutoSizeText(
+                                                    '${snapshot.data!.docs[0]['price']} р.',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 9,
+                                                  ),
+                                                  Image.asset(
+                                                    'assets/images/shop.png',
+                                                    width: 12,
+                                                    color: Colors.white,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Container(
+                                              margin: const EdgeInsets.all(10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 5),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF32A763),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  AutoSizeText(
+                                                    '${snapshot.data!.docs[0]['milliliters']} мл.',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Flexible(
+                                      flex: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Flexible(
+                                              child: AutoSizeText(
+                                                snapshot.data!.docs[0]['name'],
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: AutoSizeText(
+                                                snapshot.data!.docs[0]
+                                                    ['description'],
+                                                minFontSize: 1,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -110,7 +323,8 @@ class _MainScreenState extends State<MainScreen> {
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.only(
+                      right: 20, left: 20, top: 20, bottom: 100),
                   child: ListView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -122,23 +336,210 @@ class _MainScreenState extends State<MainScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 10,
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          mainAxisExtent: 278,
-                          maxCrossAxisExtent: 187,
-                          mainAxisSpacing: 20,
-                          crossAxisSpacing: 20,
-                        ),
-                        itemBuilder: (context, i) {
-                          return Container(
-                            color: Colors.black,
-                          );
-                        },
-                      ),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('Coffees')
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Text("Loading");
+                            }
+
+                            if (_myStreams.isEmpty) {
+                              getImages(snapshot);
+                            }
+
+                            return GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.size,
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                mainAxisExtent: 278,
+                                maxCrossAxisExtent: 187,
+                                mainAxisSpacing: 20,
+                                crossAxisSpacing: 20,
+                              ),
+                              itemBuilder: (context, i) {
+                                if (!_myStreams.asMap().containsKey(i)) {
+                                  return const SizedBox();
+                                }
+                                return StreamBuilder<dynamic>(
+                                    stream: _myStreams[i].strims,
+                                    builder: (context, snap) {
+                                      if (!controller.asMap().containsKey(i)) {
+                                        return const SizedBox();
+                                      }
+                                      return ScaleTransition(
+                                        scale: CurvedAnimation(
+                                          parent: controller[i],
+                                          curve: Curves.bounceOut,
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: Stack(
+                                                  children: [
+                                                    Center(
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  20),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  20),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  15),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  15),
+                                                        ),
+                                                        child: Image.network(
+                                                          _myStreams[i].url,
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .height,
+                                                          fit: BoxFit.cover,
+                                                          loadingBuilder: (context,
+                                                              image,
+                                                              loadingProgress) {
+                                                            if (loadingProgress ==
+                                                                null) {
+                                                              controller[i]
+                                                                  .forward();
+                                                              return image;
+                                                            }
+                                                            return const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .all(10),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 5),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                color: const Color(
+                                                                    0xFF3E2810),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  width: 1,
+                                                                )),
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            AutoSizeText(
+                                                              '${snapshot.data!.docs[i]['price']} р.',
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 9,
+                                                            ),
+                                                            Image.asset(
+                                                              'assets/images/shop.png',
+                                                              width: 20,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 15,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      AutoSizeText(
+                                                        snapshot.data!.docs[i]
+                                                            ["name"],
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      AutoSizeText(
+                                                        '${snapshot.data!.docs[i]['milliliters']} мл.',
+                                                        style: const TextStyle(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    });
+                              },
+                            );
+                          }),
                     ],
                   ),
                 )
@@ -147,124 +548,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: ScrollToHide(
-        scrollController: _scrollController,
-        duration: const Duration(milliseconds: 300),
-        hideDirection: Axis.vertical,
-        height: 80,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 15.4,
-                    spreadRadius: 1,
-                  )
-                ],
-              ),
-              child: BottomNavigationBar(
-                showSelectedLabels: false,
-                showUnselectedLabels: false,
-                elevation: 0,
-                iconSize: 28,
-                selectedFontSize: 0,
-                unselectedFontSize: 0,
-                backgroundColor: Colors.transparent,
-                currentIndex: _indexNavigationBar,
-                onTap: (index) {
-                  setState(() {
-                    _indexNavigationBar = index;
-                  });
-                },
-                items: [
-                  BottomNavigationBarItem(
-                    icon: _indexNavigationBar == 0
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFBF9768),
-                              borderRadius: BorderRadius.horizontal(
-                                right: Radius.circular(20),
-                                left: Radius.circular(20),
-                              ),
-                            ),
-                            child: Image.asset(
-                              'assets/images/menu.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                          )
-                        : Image.asset(
-                            'assets/images/menu_outline.png',
-                            width: 28,
-                            height: 28,
-                          ),
-                    label: '',
-                    tooltip: 'Каталог',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: _indexNavigationBar == 1
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFBF9768),
-                              borderRadius: BorderRadius.horizontal(
-                                right: Radius.circular(20),
-                                left: Radius.circular(20),
-                              ),
-                            ),
-                            child: Image.asset(
-                              'assets/images/shop.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                          )
-                        : Image.asset(
-                            'assets/images/shop_outline.png',
-                            width: 28,
-                            height: 28,
-                          ),
-                    label: '',
-                    tooltip: 'Карзина',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: _indexNavigationBar == 2
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 5),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFBF9768),
-                              borderRadius: BorderRadius.horizontal(
-                                right: Radius.circular(20),
-                                left: Radius.circular(20),
-                              ),
-                            ),
-                            child: Image.asset(
-                              'assets/images/persone.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                          )
-                        : Image.asset(
-                            'assets/images/persone_outline.png',
-                            width: 28,
-                            height: 28,
-                          ),
-                    label: '',
-                    tooltip: 'Акаунт',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      bottomNavigationBar: const CustomNavigationBar(),
     );
   }
 }
