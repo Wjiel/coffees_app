@@ -10,6 +10,7 @@ class CustomNavigationBar extends StatefulWidget {
 }
 
 class _CustomNavigationBarState extends State<CustomNavigationBar> {
+  int indexNavigationBar = 0;
   @override
   Widget build(BuildContext context) {
     return ScrollToHide(
@@ -43,6 +44,11 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               onTap: (index) {
                 setState(() {
                   indexNavigationBar = index;
+                  pageController.animateToPage(
+                    indexNavigationBar,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInCubic,
+                  );
                 });
               },
               items: [

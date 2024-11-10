@@ -83,8 +83,29 @@ class CustomButton extends StatelessWidget {
     final screen = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const MainScreen()));
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (BuildContext context, Animation<double> animation,
+                Animation<double> secondaryAnimation) {
+              return const MainScreen();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return ScaleTransition(
+                alignment: Alignment.bottomCenter,
+                scale: Tween<double>(begin: 0.1, end: 1).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOutCubic,
+                  ),
+                ),
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
+        );
       },
       borderRadius: BorderRadius.circular(30),
       child: Ink(
