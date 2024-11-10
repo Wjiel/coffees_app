@@ -1,4 +1,4 @@
-import 'package:coffees_aplication/features/Main_Screen/View/main_screen.dart';
+import 'package:coffees_aplication/features/Page_View_Screen/View/page_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_hide/scroll_to_hide.dart';
 

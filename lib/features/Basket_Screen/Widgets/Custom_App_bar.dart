@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatefulWidget {
@@ -12,16 +11,16 @@ class CustomAppBar extends StatefulWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
     return SliverAppBar(
       pinned: true,
       automaticallyImplyLeading: false,
-      expandedHeight: MediaQuery.of(context).size.height * 0.5,
+      expandedHeight: screen.height * 0.5,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(30),
         ),
       ),
       toolbarHeight: 130,
