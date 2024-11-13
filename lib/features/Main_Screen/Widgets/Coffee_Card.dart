@@ -16,6 +16,7 @@ class CoffeeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedScale(
+      curve: Curves.easeInOutCirc,
       scale: controller[index].count,
       duration: const Duration(milliseconds: 300),
       child: Container(

@@ -47,7 +47,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                   pageController.animateToPage(
                     indexNavigationBar,
                     duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInCubic,
+                    curve: Curves.easeInOutExpo,
                   );
                 });
               },
@@ -102,7 +102,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                           height: 28,
                         ),
                   label: '',
-                  tooltip: 'Карзина',
+                  tooltip: 'Корзина',
                 ),
                 BottomNavigationBarItem(
                   icon: indexNavigationBar == 2
@@ -128,7 +128,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                           height: 28,
                         ),
                   label: '',
-                  tooltip: 'Акаунт',
+                  tooltip: 'Аккаунт',
                 ),
               ],
             ),
