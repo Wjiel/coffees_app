@@ -59,7 +59,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
       ),
       flexibleSpace: const FlexibleSpaceBar(
-
         expandedTitleScale: 1,
         titlePadding:
             EdgeInsets.only(top: 90, right: 15, left: 15, bottom: 15),
