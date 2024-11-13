@@ -15,52 +15,61 @@ class _CustomAppBarState extends State<CustomAppBar> {
     final screen = MediaQuery.of(context).size;
 
     return SliverAppBar(
+      clipBehavior: Clip.hardEdge,
       pinned: true,
       automaticallyImplyLeading: false,
       expandedHeight: screen.height * 0.5,
+      bottom: PreferredSize(
+          preferredSize: Size(0,15), child: SizedBox(height: 0,)
+      ),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(30),
+          bottom: Radius.circular(20),
         ),
       ),
-      title: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('assets/images/logo.png'),
+      title: Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: Row(
+          children: [
+            Container(
+              width: 45,
+              height: 45,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: AssetImage('assets/images/logo.png'),
+                ),
               ),
             ),
-          ),
-          const Spacer(),
-          const AutoSizeText(
-            "Merbel`s Coffee",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
+            const Spacer(),
+            const AutoSizeText(
+              "Merbel`s Coffee",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-          ),
-          const Spacer(
-            flex: 9,
-          ),
-        ],
+            const Spacer(
+              flex: 9,
+            ),
+          ],
+        ),
       ),
       flexibleSpace: const FlexibleSpaceBar(
+
+        expandedTitleScale: 1,
         titlePadding:
-            EdgeInsets.only(top: 120, right: 15, left: 15, bottom: 15),
+            EdgeInsets.only(top: 90, right: 15, left: 15, bottom: 15),
         title: Flex(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           direction: Axis.vertical,
           children: [
             Flexible(
-              flex: 4,
+              flex: 2,
               child: AutoSizeText(
                 'Кофе дня',
                 style: TextStyle(
@@ -71,7 +80,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
             Flexible(child: SizedBox(height: 10)),
-            Flexible(flex: 5, child: DescountCoffeeDay()),
+            Flexible(flex: 7, child: DescountCoffeeDay()),
           ],
         ),
       ),
