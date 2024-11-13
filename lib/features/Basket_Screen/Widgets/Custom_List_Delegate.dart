@@ -16,7 +16,7 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
       padding: EdgeInsets.only(
         right: 20,
         left: 20,
-        top: 20,
+        top: 0,
         bottom: screen.height * 0.2,
       ),
       child: const Column(

@@ -16,8 +16,7 @@ final List<myStream> myStreams = [];
 final List<myStreamAnim> controller = [];
 
 class _CustomListDelegateState extends State<CustomListDelegate> {
-  void getImages(
-      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) async {
+  getImages(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) async {
     final storageRef = FirebaseStorage.instance.ref();
 
     for (int i = 0; i < snap.data!.size; i++) {

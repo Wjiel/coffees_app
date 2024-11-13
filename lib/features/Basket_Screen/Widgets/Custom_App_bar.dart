@@ -23,7 +23,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           bottom: Radius.circular(30),
         ),
       ),
-      toolbarHeight: 130,
+      toolbarHeight: screen.height * 0.13,
       title: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +85,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ],
       ),
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding:
-            const EdgeInsets.only(top: 150, right: 15, left: 15, bottom: 15),
+        titlePadding: EdgeInsets.only(
+            top: screen.height * 0.175, right: 15, left: 15, bottom: 15),
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
