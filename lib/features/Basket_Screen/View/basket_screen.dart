@@ -14,7 +14,9 @@ class BasketScreen extends StatelessWidget {
         const CustomAppBar(),
         SliverList(
           delegate: SliverChildListDelegate(
-            [const CustomListDelegate()],
+            [
+              const CustomListDelegate(),
+            ],
           ),
         ),
       ],

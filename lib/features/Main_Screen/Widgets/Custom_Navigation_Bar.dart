@@ -13,11 +13,12 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   int indexNavigationBar = 0;
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return ScrollToHide(
       scrollController: scrollController,
       duration: const Duration(milliseconds: 300),
       hideDirection: Axis.vertical,
-      height: 80,
+      height: 80 + 5 * (size.width / 1080),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: ClipRRect(

@@ -37,13 +37,13 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(
         right: 20,
         left: 20,
         top: 20,
-        bottom: screen.height * 0.2,
+        bottom: size.height * 0.2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,11 +71,11 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: snapshot.data!.size,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: 278,
-                  maxCrossAxisExtent: 187,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisExtent: 270 + 10 * (size.width / 1080),
+                  maxCrossAxisExtent: size.width / 2,
+                  mainAxisSpacing: 15 + 5 * (size.width / 1080),
+                  crossAxisSpacing: 15 + 5 * (size.width / 1080),
                 ),
                 itemBuilder: (context, i) {
                   if (!myStreams.asMap().containsKey(i)) {

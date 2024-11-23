@@ -15,6 +15,7 @@ class CoffeeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return AnimatedScale(
       scale: controller[index].count,
       duration: const Duration(milliseconds: 300),
@@ -77,26 +78,28 @@ class CoffeeCard extends StatelessWidget {
                             color: Colors.white,
                             width: 1,
                           )),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AutoSizeText(
-                            '${snapshot.data!.docs[index]['price']} р.',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      child: SizedBox(
+                        height: 20 + 5 * (size.width / 1080),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AutoSizeText(
+                              '${snapshot.data!.docs[index]['price']} р.',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 9,
-                          ),
-                          Image.asset(
-                            'assets/images/shop.png',
-                            width: 20,
-                            color: Colors.white,
-                          ),
-                        ],
+                            SizedBox(
+                              width: 5 + 3 * (size.width / 1080),
+                            ),
+                            Image.asset(
+                              'assets/images/shop.png',
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

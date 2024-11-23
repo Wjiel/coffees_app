@@ -27,11 +27,12 @@ class _DescountCoffeeDayState extends State<DescountCoffeeDay> {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
+    const double radius = 20;
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF7E5424),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(radius),
       ),
       child: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('CoffeesDay').snapshots(),
@@ -40,35 +41,35 @@ class _DescountCoffeeDayState extends State<DescountCoffeeDay> {
             return Shimmer.fromColors(
               baseColor: const Color(0xFF7E5424),
               highlightColor: Colors.white,
-              child: Container(
-                color: const Color.fromARGB(255, 34, 22, 9),
+              child: SizedBox(
+                width: size.width,
+                height: size.height,
               ),
             );
           }
-
-          return StreamBuilder<dynamic>(
-              stream: _streamCoffeeDay.strims,
-              builder: (context, snap) {
-                if (_streamCoffeeDay.url == '') {
-                  _getImageCoffesDay(snapshot);
-                  return const SizedBox();
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                flex: 4,
+                child: Stack(
                   children: [
-                    Flexible(
-                      flex: 4,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: ClipRRect(
+                    Center(
+                      child: StreamBuilder<dynamic>(
+                          stream: _streamCoffeeDay.strims,
+                          builder: (context, snap) {
+                            if (_streamCoffeeDay.url == '') {
+                              _getImageCoffesDay(snapshot);
+                              return const SizedBox();
+                            }
+                            return ClipRRect(
                               borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(20),
+                                top: Radius.circular(radius),
                               ),
                               child: Image.network(
-                                width: screen.width,
-                                height: screen.height,
+                                width: size.width,
+                                height: size.height,
                                 _streamCoffeeDay.url,
                                 fit: BoxFit.cover,
                                 loadingBuilder:
@@ -87,101 +88,66 @@ class _DescountCoffeeDayState extends State<DescountCoffeeDay> {
                                   );
                                 },
                               ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                              margin: const EdgeInsets.all(10),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
-                              decoration: BoxDecoration(
-                                  color: const Color(0xFF3E2810),
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1,
-                                  )),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AutoSizeText(
-                                    '${snapshot.data!.docs[0]['price']} р.',
-                                    minFontSize: 1,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 9,
-                                  ),
-                                  Image.asset(
-                                    'assets/images/shop.png',
-                                    width: 12,
-                                    color: Colors.white,
-                                  ),
-                                ],
+                            );
+                          }),
+                    ),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Container(
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF3E2810),
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 1,
+                            )),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AutoSizeText(
+                              '${snapshot.data!.docs[0]['price']} р.',
+                              minFontSize: 1,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              margin: const EdgeInsets.all(10),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF32A763),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AutoSizeText(
-                                    '${snapshot.data!.docs[0]['milliliters']} мл.',
-                                    minFontSize: 1,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            SizedBox(
+                              width: 10 + 5 * (size.width / 1080),
                             ),
-                          ),
-                        ],
+                            Image.asset(
+                              'assets/images/shop.png',
+                              width: 15 + 5 * (size.width / 1080),
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Flexible(
-                      flex: 2,
-                      child: Padding(
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        margin: const EdgeInsets.all(10),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                            horizontal: 12, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF32A763),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Flexible(
-                              child: AutoSizeText(
-                                snapshot.data!.docs[0]['name'],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: AutoSizeText(
-                                snapshot.data!.docs[0]['description'],
-                                minFontSize: 1,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                            AutoSizeText(
+                              '${snapshot.data!.docs[0]['milliliters']} мл.',
+                              minFontSize: 1,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
@@ -189,8 +155,43 @@ class _DescountCoffeeDayState extends State<DescountCoffeeDay> {
                       ),
                     ),
                   ],
-                );
-              });
+                ),
+              ),
+              Flexible(
+                flex: 2,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: AutoSizeText(
+                          snapshot.data!.docs[0]['name'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        child: AutoSizeText(
+                          snapshot.data!.docs[0]['description'],
+                          minFontSize: 1,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );

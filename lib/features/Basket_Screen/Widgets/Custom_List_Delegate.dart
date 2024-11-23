@@ -12,28 +12,23 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
   @override
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 20,
-        left: 20,
-        top: 0,
-        bottom: screen.height * 0.2,
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoSizeText(
-            'Корзина',
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-            ),
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(20),
+      shrinkWrap: true,
+      children: [
+        const AutoSizeText(
+          'Корзина',
+          style: TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(
-            height: 600,
-          )
-        ],
-      ),
+        ),
+        Container(
+          height: 1750,
+          color: Colors.pink,
+        ),
+      ],
     );
   }
 }

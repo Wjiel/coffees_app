@@ -7,7 +7,7 @@ class NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -36,8 +36,8 @@ class NavigationButton extends StatelessWidget {
       },
       borderRadius: BorderRadius.circular(30),
       child: Ink(
-        width: screen.width,
-        height: screen.height * 0.06,
+        width: size.width,
+        height: 50 + 10 * (size.height / 2400),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: const Color(0xFF3E2810),
@@ -51,6 +51,8 @@ class NavigationButton extends StatelessWidget {
               child: Align(
                 child: AutoSizeText(
                   'Продолжить',
+                  minFontSize: 1,
+                  maxLines: 1,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,

@@ -12,16 +12,13 @@ class CustomAppBar extends StatefulWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return SliverAppBar(
       clipBehavior: Clip.hardEdge,
       pinned: true,
       automaticallyImplyLeading: false,
-      expandedHeight: screen.height * 0.5,
-      bottom: PreferredSize(
-          preferredSize: Size(0,15), child: SizedBox(height: 0,)
-      ),
+      expandedHeight: size.height * 0.5,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       shape: const RoundedRectangleBorder(
@@ -34,8 +31,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         child: Row(
           children: [
             Container(
-              width: 45,
-              height: 45,
+              width: 45 + 5 * (size.width / 1080),
+              height: 45 + 5 * (size.width / 1080),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
@@ -58,16 +55,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ],
         ),
       ),
-      flexibleSpace: const FlexibleSpaceBar(
+      flexibleSpace: FlexibleSpaceBar(
         expandedTitleScale: 1,
-        titlePadding:
-            EdgeInsets.only(top: 90 , right: 15, left: 15, bottom: 15),
-        title: Flex(
+        titlePadding: EdgeInsets.only(
+          top: 90 + 10 * (size.width / 1080),
+          right: 15,
+          left: 15,
+          bottom: 15,
+        ),
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          direction: Axis.vertical,
           children: [
-            Flexible(
+            const Spacer(),
+            const Flexible(
               flex: 2,
               child: AutoSizeText(
                 'Кофе дня',
@@ -78,8 +79,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
               ),
             ),
-            Flexible(child: SizedBox(height: 10)),
-            Flexible(flex: 7, child: DescountCoffeeDay()),
+            Flexible(
+                child: SizedBox(
+              height: 5 + 5 * (size.width / 1080),
+            )),
+            const Flexible(
+              flex: 7,
+              child: DescountCoffeeDay(),
+            ),
           ],
         ),
       ),

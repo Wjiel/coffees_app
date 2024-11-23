@@ -7,24 +7,22 @@ class TitleCoffeeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    const TextStyle style = TextStyle(
+      color: Colors.black,
+      fontSize: 24,
+      fontWeight: FontWeight.w400,
+      fontFamily: 'Rubik',
+    );
+    final size = MediaQuery.of(context).size;
     return Transform.rotate(
       angle: -45 * math.pi / 180,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const AutoSizeText(
-            "Merbel`s",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Rubik',
-            ),
-          ),
+          const AutoSizeText("Merbel`s", style: style),
           Container(
-            width: screen.width,
-            height: screen.height * 0.22,
+            width: size.width,
+            height: 195 + 15 * (size.width / 1040),
             decoration: BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.circular(120),
@@ -38,15 +36,7 @@ class TitleCoffeeCard extends StatelessWidget {
               ),
             ),
           ),
-          const AutoSizeText(
-            "Coffee",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Rubik',
-            ),
-          ),
+          const AutoSizeText("Coffee", style: style),
         ],
       ),
     );

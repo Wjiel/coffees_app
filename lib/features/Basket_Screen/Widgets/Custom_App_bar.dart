@@ -11,11 +11,11 @@ class CustomAppBar extends StatefulWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return SliverAppBar(
       pinned: true,
       automaticallyImplyLeading: false,
-      expandedHeight: screen.height * 0.5,
+      expandedHeight: size.height * 0.5,
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       shape: const RoundedRectangleBorder(
@@ -23,9 +23,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           bottom: Radius.circular(30),
         ),
       ),
-      toolbarHeight: screen.height * 0.13,
+      toolbarHeight: 130 + 10 * (size.width / 1080),
       title: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const AutoSizeText(
@@ -37,11 +36,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
           const SizedBox(height: 10),
           SizedBox(
-            height: 30,
+            height: 30 + 5 * (size.width / 1080),
             child: Row(
               children: [
                 Flexible(child: Image.asset('assets/images/location.png')),
-                const Flexible(child: SizedBox(width: 10)),
+                Flexible(
+                    child: SizedBox(
+                  width: 10 + 5 * (size.width / 1080),
+                )),
                 const Expanded(
                   flex: 9,
                   child: AutoSizeText(
@@ -57,7 +59,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(
+            height: 10 + 5 * (size.width / 1080),
+          ),
           SizedBox(
             height: 30,
             child: Row(
@@ -85,13 +89,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ],
       ),
       flexibleSpace: FlexibleSpaceBar(
+        expandedTitleScale: 1,
         titlePadding: EdgeInsets.only(
-            top: screen.height * 0.175, right: 15, left: 15, bottom: 15),
+            top: 180 + 15 * (size.width / 1080),
+            right: 15,
+            left: 15,
+            bottom: 15),
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Spacer(
-              flex: 4,
+              flex: 1,
             ),
             Flexible(
               flex: 6,
