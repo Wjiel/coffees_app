@@ -11,7 +11,6 @@ class CustomListDelegate extends StatefulWidget {
 class _CustomListDelegateState extends State<CustomListDelegate> {
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
     return ListView(
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
