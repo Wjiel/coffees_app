@@ -17,6 +17,7 @@ class CoffeeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return AnimatedScale(
+      curve: Curves.easeInOutCirc,
       scale: controller[index].count,
       duration: const Duration(milliseconds: 300),
       child: Container(
