@@ -20,6 +20,8 @@ class _BodyListViewState extends State<BodyListView> {
   getImages(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snap) async {
     final storageRef = FirebaseStorage.instance.ref();
 
+    if (snap.data == null) return;
+
     for (int i = 0; i < snap.data!.size; i++) {
       myStreams.add(myStream());
       controller.add(myStreamAnim());

@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
     for (var asset in _allAsset) {
       await precacheImage(AssetImage(asset), context);
     }
-
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => MaterialApp(

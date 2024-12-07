@@ -60,6 +60,9 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
           ),
         ),
         SizedBox(
+          height: 25 + 5 * (size.height / 2400),
+        ),
+        SizedBox(
           height: 140 + 10 * (size.height / 2400),
           child: ListView(
             scrollDirection: Axis.horizontal,
@@ -71,6 +74,9 @@ class _CustomListDelegateState extends State<CustomListDelegate> {
               ),
             ],
           ),
+        ),
+        SizedBox(
+          height: 40 + 5 * (size.height / 2400),
         ),
         const AutoSizeText(
           'Промокод',

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AnimationRotation extends StatefulWidget {
+class animation_rotation extends StatefulWidget {
   final String url;
   final double size;
-  const AnimationRotation({
+  const animation_rotation({
     super.key,
     required this.url,
     required this.size,
   });
 
   @override
-  State<AnimationRotation> createState() => _animationRotationState();
+  State<animation_rotation> createState() => _animationRotationState();
 }
 
-class _animationRotationState extends State<AnimationRotation> {
+class _animationRotationState extends State<animation_rotation> {
   double rotation = 0;
 
   // @override
