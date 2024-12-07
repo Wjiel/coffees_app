@@ -1,6 +1,7 @@
-import 'package:coffees_aplication/features/Start_Screen/View/start_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:coffees_aplication/features/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -8,5 +9,10 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MaterialApp(home: StartScreen()));
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+    ),
+  );
 }
